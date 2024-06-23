@@ -129,7 +129,7 @@ app.post('/cards/:id/upvote', async (req, res) => {
                 },
             },
         })
-        res.json(updatedCard)
+        res.json(updatedCard.comments)
     } catch (error) {
         res.status(500).send('server error')
     }
@@ -149,6 +149,39 @@ app.delete('/cards/:id', async (req, res) => {
         })
     } else {
         res.json({error: "not found"})
+    }
+})
+
+app.get("/cards/:id/comments", async (req, res) => {
+    const { id } = req.params
+    const card = await prisma.card.findUnique({
+        where: { id: parseInt(id) },
+        select: {
+            comments: true
+        }
+    })
+    if (card) {
+        res.json(card.comments)
+    } else {
+        res.json({error: "card not found"})
+    }
+})
+
+app.post('/cards/:id/comments', async (req, res) => {
+    const { id } = req.params
+    const { comment }= req.body
+    try {
+        const updatedCard = await prisma.card.update({
+            where: { id: parseInt(id) },
+            data: {
+                comments: {
+                    push: comment,
+                },
+            },
+        })
+        res.json(updatedCard.comments)
+    } catch (error) {
+        res.status(500).send('server error')
     }
 })
 

@@ -31,4 +31,5 @@ model Card {
   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId  Int   
   upvotes Int @default(0)
+  comments String[]
 }
